@@ -1,10 +1,3 @@
-//
-//  BattleViewController.swift
-//  TechMon
-//
-//  Created by 大澤清乃 on 2024/05/09.
-//
-
 import UIKit
 
 class BattleViewController: UIViewController {
@@ -26,7 +19,7 @@ class BattleViewController: UIViewController {
         super.viewDidLoad()
         playerHPBar.transform = CGAffineTransform(scaleX: 1.0, y: 4.0)
         enemyHPBar.transform = CGAffineTransform(scaleX: 1.0, y: 4.0)
-        player = Player(name: "勇者", imageName: "yusya.png", attackPoint: 20, maxHP: 100)
+        player = Player(name: "勇者", imageName: "yusya.png", attackPoint: 20, fireAttackPoint: 10, maxHP: 200, maxTP: 100)
         enemy = Enemy(name: "ドラゴン", imageName: "monster.png", attackPoint: 10, maxHP: 300)
         playerNameLabel.text = player.name
         playerImageView.image = player.image
@@ -65,7 +58,7 @@ class BattleViewController: UIViewController {
         TechMonManager.damageAnimation(imageView: enemyImageView)
         TechMonManager.playSE(fileName: "SE_attack")
         enemy.currentHP -= player.attackPoint
-        player.currentTP += 5
+        player.currentTP += 10
         if player.currentTP >= player.maxTP {
             player.currentTP = player.maxTP
         }
@@ -77,7 +70,7 @@ class BattleViewController: UIViewController {
     
     @IBAction func chargeAction() {
         TechMonManager.playSE(fileName: "SE_charge")
-        player.currentTP += 20
+        player.currentTP += 40
         if player.currentTP >= player.maxTP {
             player.currentTP = player.maxTP
         }
@@ -89,7 +82,10 @@ class BattleViewController: UIViewController {
             TechMonManager.damageAnimation(imageView: enemyImageView)
             TechMonManager.playSE(fileName: "SE_fire")
             enemy.currentHP -= player.fireAttackPoint
-            player.currentTP = 0
+//            player.currentTP = 0
+            if player.currentTP <= 0 {
+                player.currentTP = 0
+            }
         }
         updateUI()
         if enemy.currentHP <= 0 {
@@ -100,6 +96,8 @@ class BattleViewController: UIViewController {
     func updateUI() {
         playerHPBar.progress = player.currentHP / player.maxHP
         enemyHPBar.progress = enemy.currentHP / enemy.maxHP
+        playerTPLabel.text = "\(player.currentTP) / \(player.maxTP)"
+        print("知りたい！\(player.currentTP)")
     }
     
     func finishBattle(vanishImageView: UIImageView, isPlayerWin: Bool) {
